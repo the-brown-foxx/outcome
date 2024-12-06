@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.vanniktech.mavenPublish)
 }
 
-group = "com.thebrownfoxx.outcome"
+group = "com.thebrownfoxx"
 version = "0.0.1"
 
 kotlin {

@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Outcome"
-include(":library")
+include(":outcome")
