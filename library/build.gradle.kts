@@ -40,7 +40,7 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/thebrownfoxx/outcome")
+            url = uri("https://maven.pkg.github.com/the-brown-foxx/outcome")
             credentials {
                 val properties = gradleLocalProperties(projectDir, providers)
                 username = properties.getProperty("gpr.user", System.getenv("USERNAME"))
