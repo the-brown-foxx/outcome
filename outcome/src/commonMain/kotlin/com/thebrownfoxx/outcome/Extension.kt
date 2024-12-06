@@ -15,3 +15,7 @@ public inline fun <T> runFailing(
         Failure(e, context)
     }
 }
+
+public typealias UnitOutcome<E> = Outcome<Unit, E>
+
+public val UnitSuccess: Success<Unit> = Success(Unit)
