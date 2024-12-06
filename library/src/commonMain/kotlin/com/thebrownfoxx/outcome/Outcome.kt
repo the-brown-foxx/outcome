@@ -1,27 +1,31 @@
 package com.thebrownfoxx.outcome
 
-sealed interface Outcome<out T, out E>
+import kotlin.jvm.JvmInline
 
-data class Success<out T>(val value: T) : Outcome<T, Nothing>
+public sealed interface Outcome<out T, out E>
 
-data class Failure<out E>(
-    val error: E,
-    val context: BlockContext,
-    val cause: Failure<*>? = null,
+@JvmInline
+public value class Success<out T>(public val value: T) : Outcome<T, Nothing> {
+    override fun toString(): String = "Success($value)"
+}
+
+public class Failure<out E> private constructor(
+    public val error: E,
+    public val context: BlockContext? = null,
+    private val cause: Failure<*>? = null,
 ) : Outcome<Nothing, E> {
-    fun <E> mapError(error: E, context: BlockContext): Failure<E> {
-        return Failure(error, context, this)
+    public constructor(error: E, context: BlockContext? = null) :
+            this(error = error, context = context, cause = null)
+
+    public fun <RE> mapError(error: RE, context: BlockContext? = null): Failure<RE> {
+        return Failure(error = error, context = context, cause = this)
     }
 
-    fun <E> E.errorMapped(context: BlockContext): Failure<E> {
-        return Failure(this, context, this@Failure)
-    }
+    private val errorAtContext = if (context != null) "$error at $context" else "$error"
 
-    private val errorAtContext = "$error at $context"
+    override fun toString(): String = "Failure($errorAtContext)"
 
-    override fun toString() = "Failure($errorAtContext)"
-
-    fun toStringWithHistory(): String = buildString {
+    public fun toStringWithHistory(): String = buildString {
         appendLine("Failure: $errorAtContext")
         var currentFailure: Failure<*> = this@Failure
         while (true) {
@@ -29,23 +33,5 @@ data class Failure<out E>(
             appendLine("    Caused by: ${cause.errorAtContext}")
             currentFailure = cause
         }
-    }
-}
-
-typealias UnitOutcome<E> = Outcome<Unit, E>
-
-fun unitSuccess() = Success(Unit)
-
-fun <T> T.asSuccess() = Success(this)
-
-fun <E> E.asFailure(context: BlockContext) = Failure(this, context)
-
-data class UnexpectedError(val cause: Any?)
-
-inline fun <T> runFailing(context: BlockContext, function: () -> T): Outcome<T, Exception> {
-    return try {
-        Success(function())
-    } catch (e: Exception) {
-        Failure(e, context)
     }
 }

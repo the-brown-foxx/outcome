@@ -1,7 +1,7 @@
 package com.thebrownfoxx.outcome
 
-inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
-    context: BlockContext,
+public inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
+    context: BlockContext? = null,
     onSuccess: (T) -> RT,
     onInnerFailure: (EI) -> RE,
     onOuterFailure: (EO) -> RE,
@@ -15,10 +15,10 @@ inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
     }
 }
 
-inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
-    context: BlockContext,
+public inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
+    context: BlockContext? = null,
     onSuccess: (T) -> RT,
-    onFailure: (FlatMapFailure<EI, EO>) -> RE
+    onFailure: (FlatMapFailure<EI, EO>) -> RE,
 ): Outcome<RT, RE> {
     return when (this) {
         is Success -> when (value) {
@@ -29,8 +29,20 @@ inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
     }
 }
 
-inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
-    context: BlockContext,
+public inline fun <RT, T, E> Outcome<Outcome<T, E>, E>.flatMap(
+    onSuccess: (T) -> RT,
+): Outcome<RT, E> {
+    return when (this) {
+        is Success -> when (value) {
+            is Success -> Success(onSuccess(value.value))
+            is Failure -> value
+        }
+        is Failure -> this
+    }
+}
+
+public inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
+    context: BlockContext? = null,
     onInnerFailure: (EI) -> RE,
     onOuterFailure: (EO) -> RE,
 ): Outcome<T, RE> {
@@ -43,8 +55,8 @@ inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
     }
 }
 
-inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
-    context: BlockContext,
+public inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
+    context: BlockContext? = null,
     onFailure: (FlatMapFailure<EI, EO>) -> RE,
 ): Outcome<T, RE> {
     return when (this) {
@@ -56,56 +68,28 @@ inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
     }
 }
 
-inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onInnerSuccess(
+public inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onInnerSuccess(
     function: (T) -> Unit,
 ): Outcome<Outcome<T, EI>, EO> {
     if (this is Success && value is Success) function(value.value)
     return this
 }
 
-@Deprecated(
-    message = "Use onInnerFailure instead to get access to the whole Failure object and its history",
-    replaceWith = ReplaceWith(
-        expression = "this.onInnerFailure(function)",
-        "com.thebrownfoxx.outcome.onInnerFailure",
-    )
-)
-inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.oldOnInnerFailure(
-    function: (EI) -> Unit,
-): Outcome<Outcome<T, EI>, EO> {
-    if (this is Success && value is Failure) function(value.error)
-    return this
-}
-
-inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onInnerFailure(
+public inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onInnerFailure(
     function: Failure<EI>.() -> Unit,
 ): Outcome<Outcome<T, EI>, EO> {
     if (this is Success && value is Failure) value.function()
     return this
 }
 
-@Deprecated(
-    message = "Use onOuterFailure instead to get access to the whole Failure object and its history",
-    replaceWith = ReplaceWith(
-        expression = "this.onOuterFailure(function)",
-        "com.thebrownfoxx.outcome.onOuterFailure",
-    )
-)
-inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.oldOnOuterFailure(
-    function: (EO) -> Unit,
-): Outcome<Outcome<T, EI>, EO> {
-    if (this is Failure) function(error)
-    return this
-}
-
-inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onOuterFailure(
+public inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onOuterFailure(
     function: Failure<EO>.() -> Unit,
 ): Outcome<Outcome<T, EI>, EO> {
     if (this is Failure) function()
     return this
 }
 
-inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onAnyFailure(
+public inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onAnyFailure(
     function: (FlatMapFailure<EI, EO>) -> Unit,
 ): Outcome<Outcome<T, EI>, EO> {
     if (this is Success && value is Failure) function(FlatMapFailure.Inner(value.error))
@@ -113,7 +97,7 @@ inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onAnyFailure(
     return this
 }
 
-sealed interface FlatMapFailure<out EI, out EO> {
-    data class Inner<out EI>(val error: EI) : FlatMapFailure<EI, Nothing>
-    data class Outer<out EO>(val error: EO) : FlatMapFailure<Nothing, EO>
+public sealed interface FlatMapFailure<out EI, out EO> {
+    public data class Inner<out EI>(val error: EI) : FlatMapFailure<EI, Nothing>
+    public data class Outer<out EO>(val error: EO) : FlatMapFailure<Nothing, EO>
 }
