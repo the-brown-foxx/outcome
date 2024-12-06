@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -32,5 +33,19 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/thebrownfoxx/outcome")
+            credentials {
+                val properties = gradleLocalProperties(projectDir, providers)
+                username = properties.getProperty("gpr.user", System.getenv("USERNAME"))
+                password = properties.getProperty("gpr.key", System.getenv("TOKEN"))
+            }
+        }
     }
 }
