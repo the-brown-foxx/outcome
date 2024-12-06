@@ -11,7 +11,7 @@ public value class Success<out T>(public val value: T) : Outcome<T, Nothing> {
 
 public class Failure<out E> private constructor(
     public val error: E,
-    public val context: BlockContext? = null,
+    private val context: BlockContext? = null,
     private val cause: Failure<*>? = null,
 ) : Outcome<Nothing, E> {
     public constructor(error: E, context: BlockContext? = null) :
@@ -21,17 +21,18 @@ public class Failure<out E> private constructor(
         return Failure(error = error, context = context, cause = this)
     }
 
-    private val errorAtContext = if (context != null) "$error at $context" else "$error"
+    private val errorAtContext = if (context != null) "$error at ${context.label}" else "$error"
 
     override fun toString(): String = "Failure($errorAtContext)"
 
-    public fun toStringWithHistory(): String = buildString {
-        appendLine("Failure: $errorAtContext")
-        var currentFailure: Failure<*> = this@Failure
-        while (true) {
-            val cause = currentFailure.cause ?: break
-            appendLine("    Caused by: ${cause.errorAtContext}")
-            currentFailure = cause
+    public val log: String
+        get() = buildString {
+            appendLine("Failure: $errorAtContext")
+            var currentFailure: Failure<*> = this@Failure
+            while (true) {
+                val cause = currentFailure.cause ?: break
+                appendLine("    Caused by: ${cause.errorAtContext}")
+                currentFailure = cause
+            }
         }
-    }
 }

@@ -25,7 +25,7 @@ public fun <T, E> Outcome<T, E>.getOrNull(): T? {
 
 public fun <T, E> Outcome<T, E>.getOrThrow(): T {
     return getOrElse {
-        throw IllegalArgumentException("Cannot get value from ${this.toStringWithHistory()}")
+        throw IllegalArgumentException("Cannot get value from $log")
     }
 }
 
