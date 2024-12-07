@@ -1,21 +1,26 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinJvm)
+    alias(libs.plugins.android.lint)
     alias(libs.plugins.vanniktech.mavenPublish)
 }
 
 group = "com.thebrownfoxx"
-version = "0.0.3"
+version = "0.0.1"
 
 kotlin {
     explicitApi()
+}
 
-    jvm()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
-    linuxX64()
+dependencies {
+    compileOnly(libs.lintApi)
+}
+
+tasks.withType<Jar> {
+    manifest {
+        attributes("Lint-Registry-v2" to "com.thebrownfoxx.outcome.lint.OutcomeIssueRegistry")
+    }
 }
 
 publishing {
