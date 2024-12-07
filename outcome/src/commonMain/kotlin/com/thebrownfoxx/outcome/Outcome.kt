@@ -21,6 +21,10 @@ public class Failure<out E> private constructor(
         return Failure(error = error, context = context, cause = this)
     }
 
+    public fun <RE> RE.asMappedFailure(context: BlockContext? = null): Failure<RE> {
+        return Failure(error = this, context = context, cause = this@Failure)
+    }
+
     private val errorAtContext = if (context != null) "$error at ${context.label}" else "$error"
 
     override fun toString(): String = "Failure($errorAtContext)"
