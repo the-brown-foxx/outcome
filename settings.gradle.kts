@@ -17,3 +17,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Outcome"
 include(":outcome")
+include(":outcome-strict")
