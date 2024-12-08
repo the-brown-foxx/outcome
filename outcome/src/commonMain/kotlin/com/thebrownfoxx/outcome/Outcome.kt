@@ -36,11 +36,11 @@ public class Failure<out E> private constructor(
 
     public val log: String
         get() = buildString {
-            appendLine("Failure: $errorAtContext")
+            append(this@Failure)
             var currentFailure: Failure<*> = this@Failure
             while (true) {
                 val cause = currentFailure.cause ?: break
-                appendLine("    Caused by: ${cause.errorAtContext}")
+                append(" <- ${cause.errorAtContext}")
                 currentFailure = cause
             }
         }

@@ -32,6 +32,7 @@ public fun <T, E> Outcome<T, E>.getOrNull(): T? {
     return getOrElse { null }
 }
 
+@ThrowingApi
 public fun <T, E> Outcome<T, E>.getOrThrow(): T {
     return getOrElse {
         throw IllegalArgumentException("Cannot get value from $log")
