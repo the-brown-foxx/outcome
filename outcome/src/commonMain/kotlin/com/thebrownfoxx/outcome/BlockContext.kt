@@ -34,6 +34,16 @@ public class BlockContextScope(public val context: BlockContext) {
 
     public fun <E> E.asFailure(): Failure<E> = Failure(this)
 
+    public inline fun <T> runFailing(
+        function: () -> T,
+    ): Outcome<T, Exception> {
+        return try {
+            Success(function())
+        } catch (e: Exception) {
+            Failure(e, context)
+        }
+    }
+
     public fun <RE, E> Failure<E>.mapError(error: RE): Failure<RE> {
         return mapError(error = error, context = context)
     }
