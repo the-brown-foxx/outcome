@@ -1,3 +1,5 @@
+@file:OptIn(ContextlessFailureApi::class)
+
 package com.thebrownfoxx.outcome
 
 private fun main() {

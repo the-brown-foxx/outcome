@@ -14,15 +14,20 @@ public class Failure<out E> private constructor(
     private val context: BlockContext? = null,
     private val cause: Failure<*>? = null,
 ) : Outcome<Nothing, E> {
-    public constructor(error: E, context: BlockContext? = null) :
+    public constructor(error: E, context: BlockContext) :
             this(error = error, context = context, cause = null)
 
-    public fun <RE> mapError(error: RE, context: BlockContext? = null): Failure<RE> {
-        return Failure(error = error, context = context, cause = this)
+    @ContextlessFailureApi
+    public constructor(error: E) :
+            this(error = error, context = null, cause = null)
+
+    public fun <RE> RE.asMappedFailure(context: BlockContext): Failure<RE> {
+        return Failure(error = this, context = context, cause = this@Failure)
     }
 
-    public fun <RE> RE.asMappedFailure(context: BlockContext? = null): Failure<RE> {
-        return Failure(error = this, context = context, cause = this@Failure)
+    @ContextlessFailureApi
+    public fun <RE> RE.asMappedFailure(): Failure<RE> {
+        return Failure(error = this, context = null, cause = this@Failure)
     }
 
     private val errorAtContext = if (context != null) "$error at ${context.label}" else "$error"

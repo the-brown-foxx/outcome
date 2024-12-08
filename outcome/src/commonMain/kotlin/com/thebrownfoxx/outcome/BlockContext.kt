@@ -2,6 +2,11 @@ package com.thebrownfoxx.outcome
 
 import kotlin.jvm.JvmInline
 
+@RequiresOptIn(message = "This API does not provide your Failure a context. Please provide a BlockContext.")
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
+public annotation class ContextlessFailureApi
+
 @JvmInline
 public value class BlockContext(public val label: String)
 
