@@ -87,6 +87,16 @@ public inline fun <RE, T, E> Outcome<T, E>.mapError(
     }
 }
 
+public inline fun <RT, RE, E, T> Outcome<T, E>.transform(
+    onSuccess: (T) -> Outcome<RT, RE>,
+    onFailure: Failure<E>.() -> Outcome<RT, RE>,
+): Outcome<RT, RE> {
+    return when (this) {
+        is Success -> onSuccess(value)
+        is Failure -> onFailure()
+    }
+}
+
 public inline fun <T, E> Outcome<T, E>.onSuccess(
     function: (T) -> Unit,
 ): Outcome<T, E> {
