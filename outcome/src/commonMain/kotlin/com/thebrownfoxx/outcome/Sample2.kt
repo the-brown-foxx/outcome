@@ -6,11 +6,9 @@ private fun main() {
 }
 
 private fun selectPlayer(playerCount: Int): Outcome<Int, SelectPlayerError> {
-    blockContext("selectPlayer") {
-        return rollDie(playerCount)
-            .mapError(SelectPlayerError::fromRollDieError)
-            .onSuccess { if (it !in 1..playerCount) return Failure(SelectPlayerError.IncorrectDieSides) }
-    }
+    return rollDie(playerCount)
+        .mapError { SelectPlayerError.fromRollDieError(it) }
+        .onSuccess { if (it !in 1..playerCount) return Failure(SelectPlayerError.IncorrectDieSides) }
 }
 
 private enum class SelectPlayerError {
@@ -27,13 +25,11 @@ private enum class SelectPlayerError {
 }
 
 private fun rollDie(sides: Int): Outcome<Int, RollDieError> {
-    blockContext("rollDie") {
-        val roll = (-1..sides + 2).random()
-        if (roll <= -1) return Failure(RollDieError.DieTeleportedAway)
-        if (roll <= 0) return Failure(RollDieError.DogAteDie)
-        if (roll > sides + 1) return Failure(RollDieError.DieTurnedIntoBlackHole)
-        return Success(roll) // A 6-sided die could return a 7
-    }
+    val roll = (-1..sides + 2).random()
+    if (roll <= -1) return Failure(RollDieError.DieTeleportedAway)
+    if (roll <= 0) return Failure(RollDieError.DogAteDie)
+    if (roll > sides + 1) return Failure(RollDieError.DieTurnedIntoBlackHole)
+    return Success(roll) // A 6-sided die could return a 7
 }
 
 private enum class RollDieError {
