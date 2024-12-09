@@ -11,17 +11,17 @@ public value class Success<out T>(public val value: T) : Outcome<T, Nothing> {
 
 public class Failure<out E> private constructor(
     public val error: E,
-    private val context: StackTrace?,
+    private val stackTrace: StackTrace?,
     private val cause: Failure<*>? = null,
 ) : Outcome<Nothing, E> {
-    public constructor(error: E, context: StackTrace = StackTrace()) :
-            this(error = error, context = context, cause = null)
+    public constructor(error: E, stackTrace: StackTrace = StackTrace()) :
+            this(error = error, stackTrace = stackTrace, cause = null)
 
-    public fun <RE> RE.asMappedFailure(context: StackTrace = StackTrace()): Failure<RE> {
-        return Failure(error = this, context = context, cause = this@Failure)
+    public fun <RE> RE.asMappedFailure(stackTrace: StackTrace = StackTrace()): Failure<RE> {
+        return Failure(error = this, stackTrace = stackTrace, cause = this@Failure)
     }
 
-    private val errorAtContext = if (context != null) "$error ${context.label}" else "$error"
+    private val errorAtContext = if (stackTrace != null) "$error ${stackTrace.label}" else "$error"
 
     override fun toString(): String = "Failure($errorAtContext)"
 

@@ -14,8 +14,8 @@ public inline fun <T> blockContext(
     label: String,
     block: BlockContextScope.() -> T,
 ): T {
-    val context = StackTrace(label)
-    return with(BlockContextScope(context)) { block() }
+    val stackTrace = StackTrace(label)
+    return with(BlockContextScope(stackTrace)) { block() }
 }
 
 @Deprecated("No need to wrap in BlockContext")
@@ -23,15 +23,15 @@ public inline fun <T> Any.memberBlockContext(
     label: String,
     block: BlockContextScope.() -> T,
 ): T {
-    val context = StackTrace("${this::class.simpleName}::$label")
-    return with(BlockContextScope(context)) { block() }
+    val stackTrace = StackTrace("${this::class.simpleName}::$label")
+    return with(BlockContextScope(stackTrace)) { block() }
 }
 
 @Deprecated("No need to wrap in BlockContext")
-public class BlockContextScope(public val context: StackTrace) {
+public class BlockContextScope(public val stackTrace: StackTrace) {
     public fun <E> Failure(error: E): Failure<E> = Failure(
         error = error,
-        context = context,
+        stackTrace = stackTrace,
     )
 
     public fun <E> E.asFailure(): Failure<E> = Failure(this)
@@ -42,12 +42,12 @@ public class BlockContextScope(public val context: StackTrace) {
         return try {
             Success(function())
         } catch (e: Exception) {
-            Failure(e, context)
+            Failure(e, stackTrace)
         }
     }
 
     public fun <RE, E> Failure<E>.mapError(error: RE): Failure<RE> {
-        return mapError(error = error, context = context)
+        return mapError(error = error, stackTrace = stackTrace)
     }
 
     public inline fun <RT, RE, T, E> Outcome<T, E>.map(
@@ -56,7 +56,7 @@ public class BlockContextScope(public val context: StackTrace) {
     ): Outcome<RT, RE> {
         return when (this) {
             is Success -> Success(onSuccess(value))
-            is Failure -> mapError(onFailure(error), context)
+            is Failure -> mapError(onFailure(error), stackTrace)
         }
     }
 
@@ -65,7 +65,7 @@ public class BlockContextScope(public val context: StackTrace) {
     ): Outcome<T, RE> {
         return when (this) {
             is Success -> this
-            is Failure -> mapError(onFailure(error), context)
+            is Failure -> mapError(onFailure(error), stackTrace)
         }
     }
 
@@ -76,9 +76,9 @@ public class BlockContextScope(public val context: StackTrace) {
         return when (this) {
             is Success -> when (value) {
                 is Success -> Success(onSuccess(value.value))
-                is Failure -> value.mapError(onFailure(FlatMapFailure.Inner(value.error)), context)
+                is Failure -> value.mapError(onFailure(FlatMapFailure.Inner(value.error)), stackTrace)
             }
-            is Failure -> mapError(onFailure(FlatMapFailure.Outer(error)), context)
+            is Failure -> mapError(onFailure(FlatMapFailure.Outer(error)), stackTrace)
         }
     }
 
@@ -89,9 +89,9 @@ public class BlockContextScope(public val context: StackTrace) {
         return when (this) {
             is Success -> when (value) {
                 is Success -> value
-                is Failure -> value.mapError(onInnerFailure(value.error), context)
+                is Failure -> value.mapError(onInnerFailure(value.error), stackTrace)
             }
-            is Failure -> mapError(onOuterFailure(error), context)
+            is Failure -> mapError(onOuterFailure(error), stackTrace)
         }
     }
 
@@ -101,9 +101,9 @@ public class BlockContextScope(public val context: StackTrace) {
         return when (this) {
             is Success -> when (value) {
                 is Success -> value
-                is Failure -> value.mapError(onFailure(FlatMapFailure.Inner(value.error)), context)
+                is Failure -> value.mapError(onFailure(FlatMapFailure.Inner(value.error)), stackTrace)
             }
-            is Failure -> mapError(onFailure(FlatMapFailure.Outer(error)), context)
+            is Failure -> mapError(onFailure(FlatMapFailure.Outer(error)), stackTrace)
         }
     }
 }

@@ -2,17 +2,17 @@ package com.thebrownfoxx.outcome
 
 public fun <T> T.asSuccess(): Success<T> = Success(this)
 
-public fun <T> T.asFailure(context: StackTrace = StackTrace()): Failure<T> =
-    Failure(error = this, context = context)
+public fun <T> T.asFailure(stackTrace: StackTrace = StackTrace()): Failure<T> =
+    Failure(error = this, stackTrace = stackTrace)
 
 public inline fun <T> runFailing(
-    context: StackTrace = StackTrace(),
+    stackTrace: StackTrace = StackTrace(),
     function: () -> T,
 ): Outcome<T, Exception> {
     return try {
         Success(function())
     } catch (e: Exception) {
-        Failure(e, context)
+        Failure(e, stackTrace)
     }
 }
 
