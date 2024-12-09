@@ -1,12 +1,7 @@
 package com.thebrownfoxx.outcome
 
-public fun <RE, E> Failure<E>.mapError(error: RE, context: BlockContext): Failure<RE> {
+public fun <RE, E> Failure<E>.mapError(error: RE, context: StackTrace = StackTrace()): Failure<RE> {
     return error.asMappedFailure(context)
-}
-
-@ContextlessFailureApi
-public fun <RE, E> Failure<E>.mapError(error: RE): Failure<RE> {
-    return error.asMappedFailure()
 }
 
 public inline fun <R, T, E> Outcome<T, E>.fold(
@@ -40,24 +35,13 @@ public fun <T, E> Outcome<T, E>.getOrThrow(): T {
 }
 
 public inline fun <RT, RE, T, E> Outcome<T, E>.map(
-    context: BlockContext,
+    context: StackTrace = StackTrace(),
     onSuccess: (T) -> RT,
     onFailure: (E) -> RE,
 ): Outcome<RT, RE> {
     return when (this) {
         is Success -> Success(onSuccess(value))
         is Failure -> mapError(onFailure(error), context)
-    }
-}
-
-@ContextlessFailureApi
-public inline fun <RT, RE, T, E> Outcome<T, E>.map(
-    onSuccess: (T) -> RT,
-    onFailure: (E) -> RE,
-): Outcome<RT, RE> {
-    return when (this) {
-        is Success -> Success(onSuccess(value))
-        is Failure -> mapError(onFailure(error))
     }
 }
 
@@ -69,22 +53,12 @@ public inline fun <R, T, E> Outcome<T, E>.map(transform: (T) -> R): Outcome<R, E
 }
 
 public inline fun <RE, T, E> Outcome<T, E>.mapError(
-    context: BlockContext,
+    context: StackTrace = StackTrace(),
     onFailure: (E) -> RE,
 ): Outcome<T, RE> {
     return when (this) {
         is Success -> this
         is Failure -> mapError(onFailure(error), context)
-    }
-}
-
-@ContextlessFailureApi
-public inline fun <RE, T, E> Outcome<T, E>.mapError(
-    onFailure: (E) -> RE,
-): Outcome<T, RE> {
-    return when (this) {
-        is Success -> this
-        is Failure -> mapError(onFailure(error))
     }
 }
 

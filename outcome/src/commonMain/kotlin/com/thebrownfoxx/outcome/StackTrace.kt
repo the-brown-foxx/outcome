@@ -2,26 +2,33 @@ package com.thebrownfoxx.outcome
 
 import kotlin.jvm.JvmInline
 
-@JvmInline
-public value class BlockContext(public val label: String)
+public typealias BlockContext = StackTrace
 
+@JvmInline
+public value class StackTrace(
+    public val label: String = Throwable().stackTraceToString().split("\n")[3].trim(),
+)
+
+@Deprecated("No need to wrap in BlockContext")
 public inline fun <T> blockContext(
     label: String,
     block: BlockContextScope.() -> T,
 ): T {
-    val context = BlockContext(label)
+    val context = StackTrace(label)
     return with(BlockContextScope(context)) { block() }
 }
 
+@Deprecated("No need to wrap in BlockContext")
 public inline fun <T> Any.memberBlockContext(
     label: String,
     block: BlockContextScope.() -> T,
 ): T {
-    val context = BlockContext("${this::class.simpleName}::$label")
+    val context = StackTrace("${this::class.simpleName}::$label")
     return with(BlockContextScope(context)) { block() }
 }
 
-public class BlockContextScope(public val context: BlockContext) {
+@Deprecated("No need to wrap in BlockContext")
+public class BlockContextScope(public val context: StackTrace) {
     public fun <E> Failure(error: E): Failure<E> = Failure(
         error = error,
         context = context,

@@ -1,7 +1,7 @@
 package com.thebrownfoxx.outcome
 
 public inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
-    context: BlockContext,
+    context: StackTrace = StackTrace(),
     onSuccess: (T) -> RT,
     onInnerFailure: (EI) -> RE,
     onOuterFailure: (EO) -> RE,
@@ -15,23 +15,8 @@ public inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
     }
 }
 
-@ContextlessFailureApi
 public inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
-    onSuccess: (T) -> RT,
-    onInnerFailure: (EI) -> RE,
-    onOuterFailure: (EO) -> RE,
-): Outcome<RT, RE> {
-    return when (this) {
-        is Success -> when (value) {
-            is Success -> Success(onSuccess(value.value))
-            is Failure -> value.mapError(onInnerFailure(value.error))
-        }
-        is Failure -> mapError(onOuterFailure(error))
-    }
-}
-
-public inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
-    context: BlockContext,
+    context: StackTrace = StackTrace(),
     onSuccess: (T) -> RT,
     onFailure: (FlatMapFailure<EI, EO>) -> RE,
 ): Outcome<RT, RE> {
@@ -41,20 +26,6 @@ public inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
             is Failure -> value.mapError(onFailure(FlatMapFailure.Inner(value.error)), context)
         }
         is Failure -> mapError(onFailure(FlatMapFailure.Outer(error)), context)
-    }
-}
-
-@ContextlessFailureApi
-public inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
-    onSuccess: (T) -> RT,
-    onFailure: (FlatMapFailure<EI, EO>) -> RE,
-): Outcome<RT, RE> {
-    return when (this) {
-        is Success -> when (value) {
-            is Success -> Success(onSuccess(value.value))
-            is Failure -> value.mapError(onFailure(FlatMapFailure.Inner(value.error)))
-        }
-        is Failure -> mapError(onFailure(FlatMapFailure.Outer(error)))
     }
 }
 
@@ -71,7 +42,7 @@ public inline fun <RT, T, E> Outcome<Outcome<T, E>, E>.flatMap(
 }
 
 public inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
-    context: BlockContext,
+    context: StackTrace = StackTrace(),
     onInnerFailure: (EI) -> RE,
     onOuterFailure: (EO) -> RE,
 ): Outcome<T, RE> {
@@ -84,22 +55,8 @@ public inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
     }
 }
 
-@ContextlessFailureApi
 public inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
-    onInnerFailure: (EI) -> RE,
-    onOuterFailure: (EO) -> RE,
-): Outcome<T, RE> {
-    return when (this) {
-        is Success -> when (value) {
-            is Success -> value
-            is Failure -> value.mapError(onInnerFailure(value.error))
-        }
-        is Failure -> mapError(onOuterFailure(error))
-    }
-}
-
-public inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
-    context: BlockContext,
+    context: StackTrace = StackTrace(),
     onFailure: (FlatMapFailure<EI, EO>) -> RE,
 ): Outcome<T, RE> {
     return when (this) {
@@ -108,19 +65,6 @@ public inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
             is Failure -> value.mapError(onFailure(FlatMapFailure.Inner(value.error)), context)
         }
         is Failure -> mapError(onFailure(FlatMapFailure.Outer(error)), context)
-    }
-}
-
-@ContextlessFailureApi
-public inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
-    onFailure: (FlatMapFailure<EI, EO>) -> RE,
-): Outcome<T, RE> {
-    return when (this) {
-        is Success -> when (value) {
-            is Success -> value
-            is Failure -> value.mapError(onFailure(FlatMapFailure.Inner(value.error)))
-        }
-        is Failure -> mapError(onFailure(FlatMapFailure.Outer(error)))
     }
 }
 

@@ -11,36 +11,27 @@ public value class Success<out T>(public val value: T) : Outcome<T, Nothing> {
 
 public class Failure<out E> private constructor(
     public val error: E,
-    private val context: BlockContext? = null,
+    private val context: StackTrace?,
     private val cause: Failure<*>? = null,
 ) : Outcome<Nothing, E> {
-    public constructor(error: E, context: BlockContext) :
+    public constructor(error: E, context: StackTrace = StackTrace()) :
             this(error = error, context = context, cause = null)
 
-    @ContextlessFailureApi
-    public constructor(error: E) :
-            this(error = error, context = null, cause = null)
-
-    public fun <RE> RE.asMappedFailure(context: BlockContext): Failure<RE> {
+    public fun <RE> RE.asMappedFailure(context: StackTrace = StackTrace()): Failure<RE> {
         return Failure(error = this, context = context, cause = this@Failure)
     }
 
-    @ContextlessFailureApi
-    public fun <RE> RE.asMappedFailure(): Failure<RE> {
-        return Failure(error = this, context = null, cause = this@Failure)
-    }
-
-    private val errorAtContext = if (context != null) "$error at ${context.label}" else "$error"
+    private val errorAtContext = if (context != null) "$error ${context.label}" else "$error"
 
     override fun toString(): String = "Failure($errorAtContext)"
 
     public val log: String
         get() = buildString {
-            append(this@Failure)
+            appendLine(this@Failure)
             var currentFailure: Failure<*> = this@Failure
             while (true) {
                 val cause = currentFailure.cause ?: break
-                append(" <- ${cause.errorAtContext}")
+                appendLine("    <- ${cause.errorAtContext}")
                 currentFailure = cause
             }
         }

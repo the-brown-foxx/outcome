@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.thebrownfoxx"
-version = "0.0.8"
+version = "0.1.0-alpha01"
 
 kotlin {
     explicitApi()
