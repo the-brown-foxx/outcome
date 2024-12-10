@@ -12,7 +12,7 @@ public class FailureMapScope
 
     @Deprecated(
         message = "Use Failure(E, StackTrace) instead.",
-        replaceWith = ReplaceWith("Failure(e, stackTrace)"),
+        replaceWith = ReplaceWith("Failure(error, stackTrace)"),
     )
     public fun <E> mapError(error: E, stackTrace: StackTrace = StackTrace()): Failure<E> =
         Failure(error, stackTrace)
