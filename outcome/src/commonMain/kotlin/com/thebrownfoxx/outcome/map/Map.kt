@@ -39,7 +39,7 @@ public inline fun <RT, RE, T, E> Outcome<T, E>.map(
 ): Outcome<RT, RE> {
     return when (this) {
         is Success -> Success(onSuccess(value))
-        is Failure -> FailureMapScope(this).mapError(onFailure(error), stackTrace)
+        is Failure -> FailureMapScope(this).Failure(onFailure(error), stackTrace)
     }
 }
 
@@ -56,7 +56,7 @@ public inline fun <RE, T, E> Outcome<T, E>.mapError(
 ): Outcome<T, RE> {
     return when (this) {
         is Success -> this
-        is Failure -> FailureMapScope(this).mapError(onFailure(error), stackTrace)
+        is Failure -> FailureMapScope(this).Failure(onFailure(error), stackTrace)
     }
 }
 

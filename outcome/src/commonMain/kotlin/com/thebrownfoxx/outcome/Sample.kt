@@ -1,5 +1,10 @@
 package com.thebrownfoxx.outcome
 
+import com.thebrownfoxx.outcome.map.getOrElse
+import com.thebrownfoxx.outcome.map.map
+import com.thebrownfoxx.outcome.map.onFailure
+import com.thebrownfoxx.outcome.map.onSuccess
+
 private fun main() {
     flipCoin()
         .onSuccess { println("Successfully flipped ${it.name}") }

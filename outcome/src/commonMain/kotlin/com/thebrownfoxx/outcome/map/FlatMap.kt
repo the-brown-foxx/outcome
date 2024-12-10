@@ -14,9 +14,10 @@ public inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
     return when (this) {
         is Success -> when (value) {
             is Success -> Success(onSuccess(value.value))
-            is Failure -> FailureMapScope(value).mapError(onInnerFailure(value.error), stackTrace)
+            is Failure -> FailureMapScope(value).Failure(onInnerFailure(value.error), stackTrace)
         }
-        is Failure -> FailureMapScope(this).mapError(onOuterFailure(error), stackTrace)
+
+        is Failure -> FailureMapScope(this).Failure(onOuterFailure(error), stackTrace)
     }
 }
 
@@ -28,9 +29,10 @@ public inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
     return when (this) {
         is Success -> when (value) {
             is Success -> Success(onSuccess(value.value))
-            is Failure -> FailureMapScope(value).mapError(onFailure(FlatMapFailure.Inner(value.error)), stackTrace)
+            is Failure -> FailureMapScope(value).Failure(onFailure(FlatMapFailure.Inner(value.error)), stackTrace)
         }
-        is Failure -> FailureMapScope(this).mapError(onFailure(FlatMapFailure.Outer(error)), stackTrace)
+
+        is Failure -> FailureMapScope(this).Failure(onFailure(FlatMapFailure.Outer(error)), stackTrace)
     }
 }
 
@@ -42,6 +44,7 @@ public inline fun <RT, T, E> Outcome<Outcome<T, E>, E>.flatMap(
             is Success -> Success(onSuccess(value.value))
             is Failure -> value
         }
+
         is Failure -> this
     }
 }
@@ -54,9 +57,10 @@ public inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
     return when (this) {
         is Success -> when (value) {
             is Success -> value
-            is Failure -> FailureMapScope(value).mapError(onInnerFailure(value.error), stackTrace)
+            is Failure -> FailureMapScope(value).Failure(onInnerFailure(value.error), stackTrace)
         }
-        is Failure -> FailureMapScope(this).mapError(onOuterFailure(error), stackTrace)
+
+        is Failure -> FailureMapScope(this).Failure(onOuterFailure(error), stackTrace)
     }
 }
 
@@ -67,9 +71,10 @@ public inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
     return when (this) {
         is Success -> when (value) {
             is Success -> value
-            is Failure -> FailureMapScope(value).mapError(onFailure(FlatMapFailure.Inner(value.error)), stackTrace)
+            is Failure -> FailureMapScope(value).Failure(onFailure(FlatMapFailure.Inner(value.error)), stackTrace)
         }
-        is Failure -> FailureMapScope(this).mapError(onFailure(FlatMapFailure.Outer(error)), stackTrace)
+
+        is Failure -> FailureMapScope(this).Failure(onFailure(FlatMapFailure.Outer(error)), stackTrace)
     }
 }
 

@@ -1,5 +1,9 @@
 package com.thebrownfoxx.outcome
 
+import com.thebrownfoxx.outcome.map.getOrElse
+import com.thebrownfoxx.outcome.map.mapError
+import com.thebrownfoxx.outcome.map.onSuccess
+
 private fun main() {
     val winner = selectPlayer(1).getOrElse { return println(log) }
     println("Player $winner won!")

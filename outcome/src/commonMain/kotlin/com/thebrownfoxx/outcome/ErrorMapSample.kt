@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.thebrownfoxx.outcome
 
 private fun main() {

@@ -1,4 +1,4 @@
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith")
 
 package com.thebrownfoxx.outcome
 
