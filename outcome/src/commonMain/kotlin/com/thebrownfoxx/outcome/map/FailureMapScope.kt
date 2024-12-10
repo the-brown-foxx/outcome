@@ -10,6 +10,10 @@ public class FailureMapScope
     public fun <E> Failure(error: E, stackTrace: StackTrace = StackTrace()): Failure<E> =
         with(failure) { error.asMappedFailure(stackTrace) }
 
+    @Deprecated(
+        message = "Use Failure(E, StackTrace) instead.",
+        replaceWith = ReplaceWith("Failure(e, stackTrace)"),
+    )
     public fun <E> mapError(error: E, stackTrace: StackTrace = StackTrace()): Failure<E> =
         Failure(error, stackTrace)
 }
