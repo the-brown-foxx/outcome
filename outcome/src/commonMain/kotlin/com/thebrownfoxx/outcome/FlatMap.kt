@@ -1,5 +1,14 @@
+@file:Suppress("DEPRECATION")
+
 package com.thebrownfoxx.outcome
 
+@Deprecated(
+    message = "Use the equivalent in the map package instead.",
+    replaceWith = ReplaceWith(
+        expression = "this.flatMap(stackTrace, onSuccess, onInnerFailure, onOuterFailure,)",
+        "com.thebrownfoxx.outcome.map.flatMap",
+    ),
+)
 public inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
     stackTrace: StackTrace = StackTrace(),
     onSuccess: (T) -> RT,
@@ -15,6 +24,13 @@ public inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
     }
 }
 
+@Deprecated(
+    message = "Use the equivalent in the map package instead.",
+    replaceWith = ReplaceWith(
+        expression = "this.flatMap(stackTrace, onSuccess, onFailure,)",
+        "com.thebrownfoxx.outcome.map.flatMap",
+    ),
+)
 public inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
     stackTrace: StackTrace = StackTrace(),
     onSuccess: (T) -> RT,
@@ -29,6 +45,13 @@ public inline fun <RT, RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMap(
     }
 }
 
+@Deprecated(
+    message = "Use the equivalent in the map package instead.",
+    replaceWith = ReplaceWith(
+        expression = "this.flatMap(onSuccess)",
+        "com.thebrownfoxx.outcome.map.flatMap",
+    ),
+)
 public inline fun <RT, T, E> Outcome<Outcome<T, E>, E>.flatMap(
     onSuccess: (T) -> RT,
 ): Outcome<RT, E> {
@@ -41,6 +64,13 @@ public inline fun <RT, T, E> Outcome<Outcome<T, E>, E>.flatMap(
     }
 }
 
+@Deprecated(
+    message = "Use the equivalent in the map package instead.",
+    replaceWith = ReplaceWith(
+        expression = "this.flatMapError(stackTrace, onInnerFailure, onOuterFailure,)",
+        "com.thebrownfoxx.outcome.map.flatMapError",
+    ),
+)
 public inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
     stackTrace: StackTrace = StackTrace(),
     onInnerFailure: (EI) -> RE,
@@ -55,6 +85,13 @@ public inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
     }
 }
 
+@Deprecated(
+    message = "Use the equivalent in the map package instead.",
+    replaceWith = ReplaceWith(
+        expression = "this.flatMapError(stackTrace, onFailure)",
+        "com.thebrownfoxx.outcome.map.flatMapError",
+    ),
+)
 public inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
     stackTrace: StackTrace = StackTrace(),
     onFailure: (FlatMapFailure<EI, EO>) -> RE,
@@ -68,6 +105,13 @@ public inline fun <RE, T, EI, EO> Outcome<Outcome<T, EI>, EO>.flatMapError(
     }
 }
 
+@Deprecated(
+    message = "Use the equivalent in the map package instead.",
+    replaceWith = ReplaceWith(
+        expression = "this.onInnerSuccess(function)",
+        "com.thebrownfoxx.outcome.map.onInnerSuccess",
+    ),
+)
 public inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onInnerSuccess(
     function: (T) -> Unit,
 ): Outcome<Outcome<T, EI>, EO> {
@@ -75,6 +119,13 @@ public inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onInnerSuccess(
     return this
 }
 
+@Deprecated(
+    message = "Use the equivalent in the map package instead.",
+    replaceWith = ReplaceWith(
+        expression = "this.onInnerFailure { error -> function() }",
+        "com.thebrownfoxx.outcome.map.onInnerFailure",
+    ),
+)
 public inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onInnerFailure(
     function: Failure<EI>.() -> Unit,
 ): Outcome<Outcome<T, EI>, EO> {
@@ -82,6 +133,13 @@ public inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onInnerFailure(
     return this
 }
 
+@Deprecated(
+    message = "Use the equivalent in the map package instead.",
+    replaceWith = ReplaceWith(
+        expression = "this.onOuterFailure { error -> function() }",
+        "com.thebrownfoxx.outcome.map.onOuterFailure",
+    ),
+)
 public inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onOuterFailure(
     function: Failure<EO>.() -> Unit,
 ): Outcome<Outcome<T, EI>, EO> {
@@ -89,6 +147,13 @@ public inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onOuterFailure(
     return this
 }
 
+@Deprecated(
+    message = "Use the equivalent in the map package instead.",
+    replaceWith = ReplaceWith(
+        expression = "this.onAnyFailure(function)",
+        "com.thebrownfoxx.outcome.map.onAnyFailure",
+    ),
+)
 public inline fun <T, EI, EO> Outcome<Outcome<T, EI>, EO>.onAnyFailure(
     function: (FlatMapFailure<EI, EO>) -> Unit,
 ): Outcome<Outcome<T, EI>, EO> {
