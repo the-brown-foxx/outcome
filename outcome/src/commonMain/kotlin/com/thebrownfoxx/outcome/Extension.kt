@@ -1,14 +1,23 @@
 package com.thebrownfoxx.outcome
 
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
 public fun <T> T.asSuccess(): Success<T> = Success(this)
 
 public fun <T> T.asFailure(stackTrace: StackTrace = StackTrace()): Failure<T> =
     Failure(error = this, stackTrace = stackTrace)
 
+@OptIn(ExperimentalContracts::class)
 public inline fun <T> runFailing(
     stackTrace: StackTrace = StackTrace(),
     function: () -> T,
 ): Outcome<T, Exception> {
+    contract {
+        callsInPlace(function, InvocationKind.AT_MOST_ONCE)
+    }
+
     return try {
         Success(function())
     } catch (e: Exception) {
