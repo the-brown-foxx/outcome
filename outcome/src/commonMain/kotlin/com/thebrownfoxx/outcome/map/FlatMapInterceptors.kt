@@ -1,6 +1,8 @@
 @file:Suppress("UnusedReceiverParameter", "UNUSED_PARAMETER")
 
-package com.thebrownfoxx.outcome
+package com.thebrownfoxx.outcome.map
+
+import com.thebrownfoxx.outcome.Outcome
 
 // These functions cause intentional overload ambiguity so you don't accidentally use
 // Outcome<T, E>.onAction on a nested outcome
