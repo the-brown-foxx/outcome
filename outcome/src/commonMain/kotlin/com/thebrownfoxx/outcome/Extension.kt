@@ -3,6 +3,7 @@ package com.thebrownfoxx.outcome
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.coroutines.cancellation.CancellationException
 
 public fun <T> T.asSuccess(): Success<T> = Success(this)
 
@@ -20,6 +21,8 @@ public inline fun <T> runFailing(
 
     return try {
         Success(function())
+    } catch (cancellationException: CancellationException) {
+        throw cancellationException
     } catch (e: Exception) {
         Failure(e, stackTrace)
     }
