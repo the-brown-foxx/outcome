@@ -39,7 +39,7 @@ kotlin {
 mavenPublishing {
     coordinates(
         groupId = group.toString(),
-        artifactId = "karbon",
+        artifactId = "outcome",
         version = version.toString(),
     )
 
