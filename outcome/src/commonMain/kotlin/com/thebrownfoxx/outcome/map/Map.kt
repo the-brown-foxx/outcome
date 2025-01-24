@@ -43,9 +43,9 @@ public inline fun <RT, RE, T, E> Outcome<T, E>.map(
     }
 }
 
-public inline fun <R, T, E> Outcome<T, E>.map(transform: (T) -> R): Outcome<R, E> {
+public inline fun <R, T, E> Outcome<T, E>.map(onSuccess: (T) -> R): Outcome<R, E> {
     return when (this) {
-        is Success -> Success(transform(value))
+        is Success -> Success(onSuccess(value))
         is Failure -> this
     }
 }
